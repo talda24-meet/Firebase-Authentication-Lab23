@@ -66,9 +66,24 @@ def add_tweet():
         text = request.form['text']
 
     try:
-        UID = 
+        UID = login_session['user']['localId']
+        tweet = {"uid" : UID, "title" : title, "text" : text}
+        db.child("Tweets").push(tweet)
+        return redirect(url_for('add_tweet'))
+
+    except:
+        error = "Authentication failed"
+
     return render_template("add_tweet.html")
 
+@app.route('/all_tweets', methods=['GET', 'POST'])
+def all_tweets():
+    try:
+        tweets = db.child("Tweets").get().val()
+        return render_template("tweets.html", tweets= tweets)
+
+    except:
+        error = "Authentication failed"
 
 if __name__ == '__main__':
     app.run(debug=True)
